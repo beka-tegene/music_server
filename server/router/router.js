@@ -32,7 +32,6 @@ route.post("/create-music", async (req, res) => {
     });
     data.save();
     res.send(data);
-    
   } catch (error) {
     res.send({ status: error });
   }
@@ -67,9 +66,6 @@ route.get("/album-list", async (req, res) => {
       },
     },
   ]);
-  // const artist = agg[0].person.artist;
-  // const album = agg[0].person.album;
-  // const artwork = agg[0].person.artwork;
   res.status(200).send({
     data: agg,
   });
@@ -78,21 +74,18 @@ route.post("/update", async (req, res) => {
   const { id, genre, title, artist_name, album_name, art_work, audio_music } =
     req.body;
   try {
-    const data = await newModel.updateMany(
+    const data = await newModel.findByIdAndUpdate(
       { _id: id },
       {
-        $set: {
-          genre,
-          title,
-          artist_name,
-          album_name,
-          art_work,
-          audio_music,
-        },
+        genre,
+        title,
+        artist_name,
+        album_name,
+        art_work,
+        audio_music,
       }
     );
-    data.save();
-    res.send(data);
+    res.status(200).send(data);
   } catch (error) {
     res.send({ status: error });
   }
@@ -100,7 +93,11 @@ route.post("/update", async (req, res) => {
 
 route.post("/song-delete", async (req, res) => {
   const { id } = req.body;
-  await newModel.deleteOne({ _id: id });
+  try {
+    await newModel.findByIdAndDelete({ _id: id.id });
+  } catch (error) {
+    res.send({ status: error });
+  }
 });
 
 module.exports = route;
